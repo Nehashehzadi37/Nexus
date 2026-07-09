@@ -14,10 +14,35 @@ export const RegisterPage: React.FC = () => {
   const [role, setRole] = useState<UserRole>('entrepreneur');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
   
   const { register } = useAuth();
   const navigate = useNavigate();
-  
+  const checkPasswordStrength = (password: string) => {
+
+  if (password.length === 0) {
+    setPasswordStrength("");
+    return;
+  }
+
+
+  if (
+    password.length < 6
+  ) {
+    setPasswordStrength("Weak");
+  }
+  else if (
+    password.length >= 6 &&
+    /[A-Z]/.test(password) &&
+    /[0-9]/.test(password)
+  ) {
+    setPasswordStrength("Strong");
+  }
+  else {
+    setPasswordStrength("Medium");
+  }
+
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -121,17 +146,57 @@ export const RegisterPage: React.FC = () => {
               fullWidth
               startAdornment={<Mail size={18} />}
             />
-            
             <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              fullWidth
-              startAdornment={<Lock size={18} />}
-            />
-            
+  label="Password"
+  type="password"
+  value={password}
+  onChange={(e) => {
+    setPassword(e.target.value);
+    checkPasswordStrength(e.target.value);
+  }}
+  required
+  fullWidth
+  startAdornment={<Lock size={18} />}
+/>
+<p className="text-red-500">
+  Test Password Strength: {passwordStrength}
+</p>
+
+{passwordStrength && (
+  <div className="mt-2">
+
+    <p className="text-sm font-medium">
+      Password Strength:{" "}
+      <span
+        className={
+          passwordStrength === "Strong"
+            ? "text-green-600"
+            : passwordStrength === "Medium"
+            ? "text-yellow-600"
+            : "text-red-600"
+        }
+      >
+        {passwordStrength}
+      </span>
+    </p>
+
+    <div className="h-2 bg-gray-200 rounded mt-2">
+      <div
+        className={`
+          h-2 rounded
+          ${
+            passwordStrength === "Strong"
+              ? "w-full bg-green-500"
+              : passwordStrength === "Medium"
+              ? "w-2/3 bg-yellow-500"
+              : "w-1/3 bg-red-500"
+          }
+        `}
+      />
+    </div>
+
+  </div>
+)}  
             <Input
               label="Confirm password"
               type="password"

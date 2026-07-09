@@ -9,6 +9,7 @@ interface BadgeProps {
   size?: BadgeSize;
   rounded?: boolean;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLSpanElement>;
 }
 
 export const Badge: React.FC<BadgeProps> = ({

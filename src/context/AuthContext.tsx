@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { User, UserRole, AuthContextType } from '../types';
-import { users } from '../data/users';
+import { User, UserRole, AuthContextType, Investor, Entrepreneur } from '../types';
+import { users, entrepreneurs, investors } from '../data/users';
 import toast from 'react-hot-toast';
 
 // Create Auth Context
@@ -16,14 +16,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   // Check for stored user on initial load
-  useEffect(() => {
-    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
+useEffect(() => {
+  const storedUser = localStorage.getItem(USER_STORAGE_KEY);
 
+  console.log("Stored User:", storedUser);
+
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+
+  setIsLoading(false);
+}, []);
   // Mock login function - in a real app, this would make an API call
   const login = async (email: string, password: string, role: UserRole): Promise<void> => {
     setIsLoading(true);
@@ -74,9 +77,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isOnline: true,
         createdAt: new Date().toISOString()
       };
+      type Entrepreneur = /*unresolved*/ any
       
       // Add user to mock data
-      users.push(newUser);
+      users.push(newUser as Entrepreneur | Investor);
       
       setUser(newUser);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
@@ -152,9 +156,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (userIndex === -1) {
         throw new Error('User not found');
       }
-      
+      type Entrepreneur = /*unresolved*/ any
       const updatedUser = { ...users[userIndex], ...updates };
-      users[userIndex] = updatedUser;
+      users[userIndex] = updatedUser as Entrepreneur | Investor;
       
       // Update current user if it's the same user
       if (user?.id === userId) {

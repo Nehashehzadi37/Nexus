@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
@@ -22,10 +22,16 @@ import { InvestorsPage } from './pages/investors/InvestorsPage';
 import { EntrepreneursPage } from './pages/entrepreneurs/EntrepreneursPage';
 import { MessagesPage } from './pages/messages/MessagesPage';
 import { NotificationsPage } from './pages/notifications/NotificationsPage';
-import { DocumentsPage } from './pages/documents/DocumentsPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { HelpPage } from './pages/help/HelpPage';
 import { DealsPage } from './pages/deals/DealsPage';
+
+// Meeting pages
+import { MeetingsPage} from './pages/meetings/MeetingsPage';
+// Video pages
+import {VideoCallPage} from './pages/video/VideoCallPage';
+import { DocumentsPage } from './pages/documents/DocumentPage';
+import { PaymentPage } from "./pages/payment/PaymentPage";
 
 // Chat Pages
 import { ChatPage } from './pages/chat/ChatPage';
@@ -68,9 +74,6 @@ function App() {
             <Route index element={<NotificationsPage />} />
           </Route>
           
-          <Route path="/documents" element={<DashboardLayout />}>
-            <Route index element={<DocumentsPage />} />
-          </Route>
           
           <Route path="/settings" element={<DashboardLayout />}>
             <Route index element={<SettingsPage />} />
@@ -84,6 +87,18 @@ function App() {
             <Route index element={<DealsPage />} />
           </Route>
           
+          <Route path="/meetings" element={<DashboardLayout />}>
+            <Route index element={<MeetingsPage />} />
+          </Route>
+          <Route path="/video-call" element={<DashboardLayout />}>
+            <Route index element={<VideoCallPage />} />
+          </Route>
+           <Route path="/documents" element={<DashboardLayout />}>
+            <Route index element={<DocumentsPage />} />
+          </Route>
+          <Route path="/payment" element={<DashboardLayout />}>
+  <Route index element={<PaymentPage />} />
+</Route>
           {/* Chat Routes */}
           <Route path="/chat" element={<DashboardLayout />}>
             <Route index element={<ChatPage />} />

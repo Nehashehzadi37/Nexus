@@ -11,16 +11,33 @@ import { CollaborationRequest } from '../../types';
 import { getRequestsForEntrepreneur } from '../../data/collaborationRequests';
 import { investors } from '../../data/users';
 
+type MeetingEvent = {
+  id: string;
+  title: string;
+  date: string;
+  status: "available" | "pending" | "confirmed" | "rejected";
+};
 export const EntrepreneurDashboard: React.FC = () => {
   const { user } = useAuth();
   const [collaborationRequests, setCollaborationRequests] = useState<CollaborationRequest[]>([]);
   const [recommendedInvestors, setRecommendedInvestors] = useState(investors.slice(0, 3));
+  const [confirmedMeetings, setConfirmedMeetings] = useState<MeetingEvent[]>([]);
+  
   
   useEffect(() => {
     if (user) {
       // Load collaboration requests
       const requests = getRequestsForEntrepreneur(user.id);
       setCollaborationRequests(requests);
+      const savedMeetings = localStorage.getItem("meetings");
+
+if (savedMeetings) {
+  const meetings: MeetingEvent[] = JSON.parse(savedMeetings);
+
+  setConfirmedMeetings(
+    meetings.filter(meeting => meeting.status === "confirmed")
+  );
+}
     }
   }, [user]);
   
@@ -93,7 +110,9 @@ export const EntrepreneurDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-accent-700">Upcoming Meetings</p>
-                <h3 className="text-xl font-semibold text-accent-900">2</h3>
+                <h3 className="text-xl font-semibold text-accent-900">
+  {confirmedMeetings.length}
+</h3>
               </div>
             </div>
           </CardBody>
@@ -167,6 +186,43 @@ export const EntrepreneurDashboard: React.FC = () => {
               ))}
             </CardBody>
           </Card>
+
+          <Card>
+  <CardHeader>
+    <h2 className="text-lg font-medium text-gray-900">
+      Confirmed Meetings
+    </h2>
+  </CardHeader>
+
+  <CardBody>
+    {confirmedMeetings.length > 0 ? (
+      <div className="space-y-3">
+        {confirmedMeetings.map((meeting) => (
+          <div
+            key={meeting.id}
+            className="rounded-lg border border-gray-200 p-3"
+          >
+            <p className="font-medium text-gray-900">
+              {meeting.title}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              {meeting.date}
+            </p>
+
+            <span className="inline-block mt-2 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+              Confirmed
+            </span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500">
+        No confirmed meetings yet.
+      </p>
+    )}
+  </CardBody>
+</Card>
         </div>
       </div>
     </div>

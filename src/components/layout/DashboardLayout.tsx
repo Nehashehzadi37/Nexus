@@ -1,15 +1,35 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
+import Joyride from "react-joyride";
 import { useAuth } from '../../context/AuthContext';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 
+
 export const DashboardLayout: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  
+  const { isAuthenticated, isLoading } = useAuth();
+
+const steps = [
+  {
+    target: ".navbar",
+    content: "This is the top navigation bar.",
+  },
+  {
+    target: ".sidebar",
+    content: "Use the sidebar to navigate through all modules.",
+  },
+  {
+    target: ".dashboard-content",
+    content: "This is your main dashboard area.",
+  },
+];
+  console.log("isAuthenticated:", isAuthenticated);
+  console.log("isLoading:", isLoading);
   if (isLoading) {
     return (
+      
       <div className="min-h-screen flex items-center justify-center">
+        
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
       </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, PieChart, Filter, Search, PlusCircle } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
@@ -11,11 +11,32 @@ import { Entrepreneur } from '../../types';
 import { entrepreneurs } from '../../data/users';
 import { getRequestsFromInvestor } from '../../data/collaborationRequests';
 
+type MeetingEvent = {
+  id: string;
+  title: string;
+  date: string;
+  status: "available" | "pending" | "confirmed" | "rejected";
+};
 export const InvestorDashboard: React.FC = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [confirmedMeetings, setConfirmedMeetings] = useState<MeetingEvent[]>([]);
   
+  useEffect(() => {
+  const savedMeetings = localStorage.getItem("meetings");
+
+  if (savedMeetings) {
+    const meetings: MeetingEvent[] = JSON.parse(savedMeetings);
+
+    setConfirmedMeetings(
+      meetings.filter(meeting => meeting.status === "confirmed")
+    );
+  } else {
+    setConfirmedMeetings([]);
+  }
+}, []);
+
   if (!user) return null;
   
   // Get collaboration requests sent by this investor
@@ -147,6 +168,43 @@ export const InvestorDashboard: React.FC = () => {
         </Card>
       </div>
       
+      <Card>
+  <CardHeader>
+    <h2 className="text-lg font-medium text-gray-900">
+      Confirmed Meetings
+    </h2>
+  </CardHeader>
+
+  <CardBody>
+    {confirmedMeetings.length > 0 ? (
+      <div className="space-y-3">
+        {confirmedMeetings.map((meeting) => (
+          <div
+            key={meeting.id}
+            className="rounded-lg border border-gray-200 p-3"
+          >
+            <p className="font-medium text-gray-900">
+              {meeting.title}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              {meeting.date}
+            </p>
+
+            <span className="inline-block mt-2 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+              Confirmed
+            </span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500">
+        No confirmed meetings yet.
+      </p>
+    )}
+  </CardBody>
+</Card>
+
       {/* Entrepreneurs grid */}
       <div>
         <Card>

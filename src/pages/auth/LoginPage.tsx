@@ -12,6 +12,9 @@ export const LoginPage: React.FC = () => {
   const [role, setRole] = useState<UserRole>('entrepreneur');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState<"login" | "otp">("login");
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
   
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,14 +26,25 @@ export const LoginPage: React.FC = () => {
     
     try {
       await login(email, password, role);
-      // Redirect based on user role
-      navigate(role === 'entrepreneur' ? '/dashboard/entrepreneur' : '/dashboard/investor');
+      setStep("otp");
     } catch (err) {
       setError((err as Error).message);
       setIsLoading(false);
     }
   };
-  
+  const verifyOTP = () => {
+  if (otp === "123456") {
+
+    navigate(
+      role === "entrepreneur"
+        ? "/dashboard/entrepreneur"
+        : "/dashboard/investor"
+    );
+
+  } else {
+    setOtpError("Invalid OTP. Use 123456");
+  }
+};
   // For demo purposes, pre-filled credentials
   const fillDemoCredentials = (userRole: UserRole) => {
     if (userRole === 'entrepreneur') {
@@ -71,7 +85,9 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
           
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          {step === "login" ? (
+
+<form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 I am a
@@ -122,6 +138,7 @@ export const LoginPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               fullWidth
+              showPasswordToggle
             />
             
             <div className="flex items-center justify-between">
@@ -153,6 +170,52 @@ export const LoginPage: React.FC = () => {
               Sign in
             </Button>
           </form>
+          ) : (
+
+<div className="space-y-6">
+
+<h2 className="text-xl font-bold text-center">
+Two Factor Authentication
+</h2>
+
+<p className="text-center text-sm text-gray-500">
+Enter the 6 digit OTP sent to your email
+</p>
+
+
+<Input
+  label="OTP Code"
+  type="text"
+  value={otp}
+  onChange={(e)=>setOtp(e.target.value)}
+  maxLength={6}
+  fullWidth
+/>
+
+
+{otpError && (
+<p className="text-red-500 text-sm">
+{otpError}
+</p>
+)}
+
+
+<Button
+  fullWidth
+  onClick={verifyOTP}
+>
+Verify OTP
+</Button>
+
+
+<p className="text-center text-sm text-gray-500">
+Demo OTP: 123456
+</p>
+
+
+</div>
+
+)}
           
           <div className="mt-6">
             <div className="relative">
